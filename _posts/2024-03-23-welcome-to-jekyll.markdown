@@ -1,6 +1,6 @@
 ---
 layout: post
-title: 在 macOS 系统中创建和使用动态库
+title: 2024-03-23-在 macOS 系统中创建和使用动态库.markdown
 date: '2024-03-23 17:31:15 +0800'
 categories: jekyll update
 ---
