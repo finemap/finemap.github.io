@@ -1,0 +1,46 @@
+## 如何在MATLAB中优雅地处理函数参数验证
+
+`if`条件配合`nargin`，`vargin`是惯常的校验函数输入参数的方式，从 2019b 起， MATLAB 增加了一种新的语法，可以让参数校验的环节更优雅。
+
+在MATLAB的函数定义中，参数块是一种新的语法元素，它允许你直接在函数定义中指定输入参数的验证规则。这些规则可以包括参数的类型、大小、形状，甚至可以是自定义的验证函数。参数块的语法如下：
+```matlab
+function output = myfun(input)
+    arguments
+        input (1,:) {mustBeNumeric,mustBeReal}
+    end
+    % Function code
+    ....
+end
+```
+
+在这个例子中，我们指定了input必须是一个实数行向量。如果用户提供了一个不符合这个规则的输入，MATLAB会抛出一个错误。这样，我们就可以在函数的主体中放心地使用input，知道它一定满足我们的预期。
+参数块有什么好处？
+参数块的最大好处是，它让函数的输入验证变得更为直观和简洁。你不再需要在函数的主体中编写一堆复杂的验证代码，而是可以直接在函数定义中看到每个参数的验证规则。这样，你的函数代码会变得更加清晰和易于理解。
+此外，参数块还支持更复杂的验证规则。比如，你可以使用自定义的验证函数，或者使用MATLAB提供的预定义的验证函数，比如mustBeLessThan、mustBeGreaterThan等。
+参数块的使用案例
+让我们看一个更复杂的例子，这个函数接受两个输入参数x和v，并有一个可选的字符参数method：
+```matlab
+function myInterp(x,v,method)
+    arguments
+        x (1,:) {mustBeNumeric,mustBeReal}
+        v (1,:) {mustBeNumeric,mustBeReal,mustBeEqualSize(v,x)}
+        method (1,:) char {mustBeMember(method,{'linear','cubic','spline'})} = 'linear'
+    end
+    % Function code
+    ....
+end
+
+% Custom validation function
+function mustBeEqualSize(a,b)
+    % Test for equal size
+    if ~isequal(size(a),size(b))
+        eid = 'Size:notEqual';
+        msg = 'Size of first input must equal size of second input.';
+        error(eid,msg)
+    end
+end
+```
+在这个例子中，我们使用了一个自定义的验证函数mustBeEqualSize来确保x和v的大小相等。我们还指定了method的默认值为'linear'，并限制其取值只能在{'linear','cubic','spline'}中。
+
+参数块为MATLAB的函数输入验证提供了一种新的、更优雅的方式。通过使用参数块，你可以更直观、更简洁地指定函数的输入验证规则，使你的函数代码变得更清晰、更易于理解。
+
